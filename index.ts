@@ -18,9 +18,7 @@ import * as Types from "@line/bot-sdk/lib/types";
 import express = require('express');
 import axios from 'axios'
 var config_data = require('../config');
-
-
-console.log(config_data.host)
+import { statusBedrock } from 'minecraft-server-util';
 
 const config: ClientConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '',
@@ -52,20 +50,22 @@ app.post('/api/line/message',
                     const { text } = event.message;
 
                     if (text == "サーバー") {
-                        const response = await axios.get(`https://api.mcsrvstat.us/bedrock/2/${config_data.host}:${config_data.port}`)
-                        if (response.status != 200) {
-                            const error_message: Types.Message = { type: "text", text: `エラー(${response.status})\n${response["data"]}` };
-                            await client.replyMessage(replyToken, error_message);
-                            return
-                        }
-                        const status = response["data"]
+                        //const checking_message: Types.Message = { type: "text", text: "確認中…" };
+                        //await client.replyMessage(replyToken, checking_message);
                         let text = ""
-                        if (status["online"]) {
+                        try {
+                            const result = await statusBedrock(config_data.host, config_data.port, { enableSRV: true })
                             text += "サーバーは🟩オンライン\n"
-                            text += `プレイヤー: ${status["players"]["online"]}/${status["players"]["max"]}`
-                        }
-                        else text += "サーバーは🟥オフライン"
 
+
+                            text += `${result.motd.clean}`
+                            text += `プレイヤー: ${result.players.online}/${result.players.max}`
+
+
+                            text += `${result.gameMode}をプレイ中`
+                        } catch (e) {
+                            text += "サーバーは🟥オフライン"
+                        }
                         const message: Types.Message = { type: "text", text: text };
                         await client.replyMessage(replyToken, message);
                     }
