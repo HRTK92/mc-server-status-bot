@@ -17,6 +17,10 @@ import {
 import * as Types from "@line/bot-sdk/lib/types";
 import express = require('express');
 import axios from 'axios'
+var config_data = require('../config');
+
+
+console.log(config_data.host)
 
 const config: ClientConfig = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN || '',
@@ -31,7 +35,7 @@ const client = new Client(config)
 const app: express.Express = express();
 
 app.get('/', (req: express.Request, res: express.Response): void => {
-    res.send('Hello TypeScript');
+    res.send('起動したよ！');
 });
 
 app.post('/api/line/message',
@@ -48,7 +52,7 @@ app.post('/api/line/message',
                     const { text } = event.message;
 
                     if (text == "サーバー") {
-                        const response = await axios.get("https://api.mcsrvstat.us/bedrock/2/warera.aternos.me:40460")
+                        const response = await axios.get(`https://api.mcsrvstat.us/bedrock/2/${config_data.host}:${config_data.port}`)
                         const status = response["data"]
                         let text = ""
                         if (status["online"]) {
