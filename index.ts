@@ -53,6 +53,11 @@ app.post('/api/line/message',
 
                     if (text == "サーバー") {
                         const response = await axios.get(`https://api.mcsrvstat.us/bedrock/2/${config_data.host}:${config_data.port}`)
+                        if (response.status != 200) {
+                            const error_message: Types.Message = { type: "text", text: `エラー(${response.status})\n${response["data"]}` };
+                            await client.replyMessage(replyToken, error_message);
+                            return
+                        }
                         const status = response["data"]
                         let text = ""
                         if (status["online"]) {
