@@ -56,12 +56,8 @@ app.post('/api/line/message',
                             try {
                                 const result = await statusBedrock(config_data.host, config_data.port, { enableSRV: true })
                                 text += "サーバーは🟩オンライン\n"
-
-
-                                text += `${result.motd.clean}`
-                                text += `プレイヤー: ${result.players.online}/${result.players.max}`
-
-
+                                text += `${result.motd.clean}\n`
+                                text += `プレイヤー: ${result.players.online}/${result.players.max}\n`
                                 text += `${result.gameMode}をプレイ中`
                             } catch (e) {
                                 text += "サーバーは🟥オフライン"
