@@ -75,7 +75,7 @@ app.post('/api/line/message',
                             let text = ""
                             if (status["online"]) {
                                 text += "サーバーは🟩オンライン\n"
-                                text += `プレイヤー: ${status["players"]["online"]}/${status["players"]["max"]}`
+                                text += `プレイヤー: ${status["players"]["online"]}/${status["players"]["max"]}\n`
                                 text += `${status["map"]}で${status["gamemode"]}をプレイ中`
                             }
                             else text += "サーバーは🟥オフライン"
