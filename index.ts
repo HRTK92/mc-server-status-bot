@@ -48,26 +48,44 @@ app.post('/api/line/message',
                     }
                     const { replyToken } = event;
                     const { text } = event.message;
-
-                    if (text == "サーバー") {
-                        //const checking_message: Types.Message = { type: "text", text: "確認中…" };
-                        //await client.replyMessage(replyToken, checking_message);
-                        let text = ""
-                        try {
-                            const result = await statusBedrock(config_data.host, config_data.port, { enableSRV: true })
-                            text += "サーバーは🟩オンライン\n"
-
-
-                            text += `${result.motd.clean}`
-                            text += `プレイヤー: ${result.players.online}/${result.players.max}`
+                    if (text.startsWith('サーバー')) {
+                        if (text.indexOf('--module')) {
+                            //const checking_message: Types.Message = { type: "text", text: "確認中…" };
+                            //await client.replyMessage(replyToken, checking_message);
+                            let text = ""
+                            try {
+                                const result = await statusBedrock(config_data.host, config_data.port, { enableSRV: true })
+                                text += "サーバーは🟩オンライン\n"
 
 
-                            text += `${result.gameMode}をプレイ中`
-                        } catch (e) {
-                            text += "サーバーは🟥オフライン"
+                                text += `${result.motd.clean}`
+                                text += `プレイヤー: ${result.players.online}/${result.players.max}`
+
+
+                                text += `${result.gameMode}をプレイ中`
+                            } catch (e) {
+                                text += "サーバーは🟥オフライン"
+                            }
+                            const message: Types.Message = { type: "text", text: text };
+                            await client.replyMessage(replyToken, message);
+                        } else if (text == "サーバー") {
+                            const response = await axios.get(`https://api.mcsrvstat.us/bedrock/2/${config_data.host}:${config_data.port}`)
+                            if (response.status != 200) {
+                                const error_message: Types.Message = { type: "text", text: `エラー(${response.status})\n${response["data"]}` };
+                                await client.replyMessage(replyToken, error_message);
+                                return
+                            }
+                            const status = response["data"]
+                            let text = ""
+                            if (status["online"]) {
+                                text += "サーバーは🟩オンライン\n"
+                                text += `プレイヤー: ${status["players"]["online"]}/${status["players"]["max"]}`
+                            }
+                            else text += "サーバーは🟥オフライン"
+
+                            const message: Types.Message = { type: "text", text: text };
+                            await client.replyMessage(replyToken, message);
                         }
-                        const message: Types.Message = { type: "text", text: text };
-                        await client.replyMessage(replyToken, message);
                     }
                 } catch (err) {
                     console.error(err);
