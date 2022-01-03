@@ -49,7 +49,7 @@ app.post('/api/line/message',
                     const { replyToken } = event;
                     const { text } = event.message;
                     if (text.startsWith('サーバー')) {
-                        if (text.indexOf('--module')) {
+                        if (text.indexOf('--module') !== -1) {
                             //const checking_message: Types.Message = { type: "text", text: "確認中…" };
                             //await client.replyMessage(replyToken, checking_message);
                             let text = ""
