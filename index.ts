@@ -48,7 +48,7 @@ app.post('/api/line/message',
                     }
                     const { replyToken } = event;
                     const { text } = event.message;
-                    if (text.startsWith('サーバー')) {
+                    if (text.startsWith('サーバー') !== -1) {
                         if (text.indexOf('--address')) {
                             const message: Types.Message = { type: "text", text: `${config_data.host}:${config_data.port}` };
                             await client.replyMessage(replyToken, message);
