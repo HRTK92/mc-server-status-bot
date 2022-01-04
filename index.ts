@@ -49,6 +49,10 @@ app.post('/api/line/message',
                     const { replyToken } = event;
                     const { text } = event.message;
                     if (text.startsWith('サーバー')) {
+                        if (text.indexOf('--address')) {
+                            const message: Types.Message = { type: "text", text: `${config_data.host}:${config_data.port}` };
+                            await client.replyMessage(replyToken, message);
+                        }
                         if (text.indexOf('--module') !== -1) {
                             //const checking_message: Types.Message = { type: "text", text: "確認中…" };
                             //await client.replyMessage(replyToken, checking_message);
