@@ -49,17 +49,18 @@ app.post(
                 const { text } = event.message
 
                 const text_in_address = text.match(/.*:\d{5}/)
+                let address_and_port = ""
                 if (text_in_address != null) {
-                    const address_and_port = text_in_address[0]
+                    address_and_port = text_in_address[0]
                 } else {
-                    const address_and_port = `${config_data.host}:${config_data.port}`,
+                    address_and_port = `${config_data.host}:${config_data.port}`
                 }
 
                 if (text.startsWith('サーバー')) {
                     if (text.indexOf('--address') !== -1) {
                         const message: Types.Message = {
                             type: 'text',
-                            text: text_in_address,
+                            text: address_and_port,
                         }
                         await client.replyMessage(replyToken, message)
                     }
@@ -85,7 +86,7 @@ app.post(
                         await client.replyMessage(replyToken, message)
                     } else if (text == 'サーバー') {
                         const response = await axios.get(
-                            `https://api.mcsrvstat.us/bedrock/2/${text_in_address}`
+                            `https://api.mcsrvstat.us/bedrock/2/${address_and_port}`
                         )
                         if (response.status != 200) {
                             const error_message: Types.Message = {
